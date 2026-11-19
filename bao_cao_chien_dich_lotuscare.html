@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Báo cáo chiến dịch LotusCare</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f4f6f3; --surface:#ffffff; --surface-2:#f8faf7; --border:#e4e8e2;
+  --text:#14201a; --text-2:#4d5a52; --muted:#7f8a83; --grid:#e9ece7;
+  --brand:#0a8a4a; --brand-2:#0f6b3b; --brand-soft:#e3f4ea;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --good:#0a7a3f; --good-bg:#e3f4ea;
+  --shadow:0 1px 2px rgba(16,32,24,.04),0 8px 24px rgba(16,32,24,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#0f1311; --surface:#181d1a; --surface-2:#1d2320; --border:#2a322d;
+    --text:#eef2ef; --text-2:#bcc6bf; --muted:#8b968f; --grid:#262d29;
+    --brand:#2fbf73; --brand-2:#7fe0aa; --brand-soft:#173325;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+    --good:#5fd394; --good-bg:#173325;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#0f1311; --surface:#181d1a; --surface-2:#1d2320; --border:#2a322d;
+  --text:#eef2ef; --text-2:#bcc6bf; --muted:#8b968f; --grid:#262d29;
+  --brand:#2fbf73; --brand-2:#7fe0aa; --brand-soft:#173325;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+  --good:#5fd394; --good-bg:#173325;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px 48px}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,#0b6b3a 0%,#0a8a4a 55%,#3fae5a 100%);color:#fff;padding:28px 0 84px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.16),rgba(255,255,255,0) 70%)}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.01em}
+.logo-mark{width:34px;height:34px;border-radius:10px;background:#fff;display:grid;place-items:center}
+.logo-mark span{width:16px;height:16px;border-radius:50%;background:#0a8a4a;box-shadow:inset -4px -3px 0 #7a4a24}
+.top-actions{display:flex;gap:8px}
+.btn{appearance:none;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:13px;font-weight:600;padding:7px 14px;border-radius:999px;cursor:pointer}
+.btn:hover{background:rgba(255,255,255,.22)}
+.hero h1{font-size:clamp(24px,3.6vw,36px);line-height:1.2;margin:28px 0 6px;font-weight:800;letter-spacing:-.02em}
+.hero .sub{opacity:.9;margin:0;font-size:15px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);padding:5px 12px;border-radius:999px;font-size:13px}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:-56px;position:relative;z-index:1}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow)}
+.kpi .lbl{color:var(--text-2);font-size:13px;font-weight:500}
+.kpi .val{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-top:2px;font-variant-numeric:tabular-nums}
+.kpi .val small{font-size:14px;font-weight:600;color:var(--text-2);margin-left:2px}
+.kpi .foot{font-size:12.5px;color:var(--muted);margin-top:4px}
+.kpi.hl{background:linear-gradient(160deg,var(--brand-soft),var(--surface) 70%)}
+.delta{display:inline-flex;align-items:center;gap:3px;font-weight:600;color:var(--good);background:var(--good-bg);padding:1px 7px;border-radius:999px;font-size:12px}
+
+/* Cards */
+.section-title{font-size:18px;font-weight:700;margin:34px 0 12px;letter-spacing:-.01em}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 18px 14px;box-shadow:var(--shadow);min-width:0}
+.card.wide{grid-column:1/-1}
+.card h3{margin:0;font-size:15.5px;font-weight:700}
+.card .desc{margin:2px 0 10px;color:var(--text-2);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:0 0 8px;font-size:13px;color:var(--text-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.chart-box{position:relative;height:300px}
+.chart-box.tall{height:340px}
+.chart-box.short{height:240px}
+
+/* Insights */
+.insights{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.insight{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow);border-top:3px solid var(--brand)}
+.insight b{display:block;font-size:14.5px;margin-bottom:4px}
+.insight p{margin:0;color:var(--text-2);font-size:13.5px}
+
+/* Table */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums;min-width:720px}
+th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--text-2);font-weight:600;font-size:12.5px;background:var(--surface-2)}
+tbody tr:hover{background:var(--surface-2)}
+tfoot td{font-weight:700;border-bottom:none}
+.dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:8px;vertical-align:middle}
+.roas-pill{display:inline-block;min-width:52px;padding:2px 8px;border-radius:999px;background:var(--brand-soft);color:var(--brand-2);font-weight:700}
+
+footer{margin-top:36px;color:var(--muted);font-size:12.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid var(--border);padding-top:16px}
+
+@media (max-width:900px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .grid{grid-template-columns:1fr}
+  .insights{grid-template-columns:1fr}
+}
+@media (max-width:420px){ .kpi .val{font-size:22px} }
+@media print{
+  .top-actions{display:none}
+  body{background:#fff}
+  .card,.kpi,.insight{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="logo"><div class="logo-mark"><span></span></div>Cốc Cốc Ads · Báo cáo hiệu quả</div>
+      <div class="top-actions">
+        <label class="btn" for="csvInput">Tải CSV khác</label>
+        <input id="csvInput" type="file" accept=".csv" hidden>
+        <button class="btn" onclick="window.print()">In / Lưu PDF</button>
+      </div>
+    </div>
+    <h1 id="title">Chiến dịch “Rạng rỡ mùa lễ hội” — LotusCare</h1>
+    <p class="sub">Công ty CP Mỹ phẩm Hoa Sen Việt (LotusCare) · Quảng cáo trên trình duyệt Cốc Cốc</p>
+    <div class="meta">
+      <span class="chip" id="period">21/09 – 15/11/2026</span>
+      <span class="chip">4 định dạng quảng cáo</span>
+      <span class="chip">Mục tiêu: đơn hàng trên website</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="kpis" id="kpis"></section>
+
+  <h2 class="section-title">Diễn biến theo tuần</h2>
+  <div class="grid">
+    <div class="card wide">
+      <h3>Chi phí và doanh thu mỗi tuần</h3>
+      <p class="desc">Triệu VND · doanh thu tăng mạnh ở tuần 7–8 nhờ đợt khuyến mãi 11.11</p>
+      <div class="legend" id="lgRev"></div>
+      <div class="chart-box tall"><canvas id="cRev"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Chuyển đổi theo tuần</h3>
+      <p class="desc">Số đơn hàng, chia theo định dạng quảng cáo</p>
+      <div class="legend" id="lgConv"></div>
+      <div class="chart-box"><canvas id="cConv"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Lượt nhấp chuột theo tuần</h3>
+      <p class="desc">Nghìn lượt nhấp, chia theo định dạng quảng cáo</p>
+      <div class="legend" id="lgClick"></div>
+      <div class="chart-box"><canvas id="cClick"></canvas></div>
+    </div>
+  </div>
+
+  <h2 class="section-title">So sánh định dạng quảng cáo</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>ROAS theo định dạng</h3>
+      <p class="desc">Doanh thu thu về trên mỗi 1 đồng chi phí</p>
+      <div class="chart-box short"><canvas id="cRoas"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Chi phí mỗi chuyển đổi (CPA)</h3>
+      <p class="desc">Nghìn VND / đơn hàng · càng thấp càng tốt</p>
+      <div class="chart-box short"><canvas id="cCpa"></canvas></div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Nhận định chính</h2>
+  <section class="insights" id="insights"></section>
+
+  <h2 class="section-title">Bảng tổng hợp</h2>
+  <div class="card">
+    <div class="table-wrap"><table id="tbl"></table></div>
+  </div>
+
+  <footer>
+    <span>Nguồn: hệ thống Cốc Cốc Ads · Dữ liệu mẫu phục vụ minh hoạ</span>
+    <span id="generated"></span>
+  </footer>
+</main>
+
+<script id="csvData" type="text/csv">
+tuan,ngay_bat_dau,ngay_ket_thuc,dinh_dang_quang_cao,luot_hien_thi,luot_nhap_chuot,chuyen_doi,chi_phi_vnd,doanh_thu_vnd
+Tuần 1,2026-09-21,2026-09-27,Search Ads,408161,19806,1251,42978000,729171000
+Tuần 1,2026-09-21,2026-09-27,Newtab Ads,1810243,14044,450,77693000,258611000
+Tuần 1,2026-09-21,2026-09-27,Skin Ads,2234824,8634,203,69236000,111631000
+Tuần 1,2026-09-21,2026-09-27,Video Ads,936603,10694,331,51910000,189244000
+Tuần 2,2026-09-28,2026-10-04,Search Ads,483644,23350,1546,52082000,852681000
+Tuần 2,2026-09-28,2026-10-04,Newtab Ads,1858447,15594,536,80960000,314379000
+Tuần 2,2026-09-28,2026-10-04,Skin Ads,2625076,11042,268,75309000,145998000
+Tuần 2,2026-09-28,2026-10-04,Video Ads,999266,11768,323,53938000,189551000
+Tuần 3,2026-10-05,2026-10-11,Search Ads,475213,24824,1621,53314000,906994000
+Tuần 3,2026-10-05,2026-10-11,Newtab Ads,2134113,19158,668,98239000,376107000
+Tuần 3,2026-10-05,2026-10-11,Skin Ads,2946201,11916,280,90659000,154604000
+Tuần 3,2026-10-05,2026-10-11,Video Ads,1115227,11592,337,62960000,197429000
+Tuần 4,2026-10-12,2026-10-18,Search Ads,538730,28774,1837,59820000,1077201000
+Tuần 4,2026-10-12,2026-10-18,Newtab Ads,2222814,21725,769,99768000,456119000
+Tuần 4,2026-10-12,2026-10-18,Skin Ads,2699869,12672,314,84990000,190207000
+Tuần 4,2026-10-12,2026-10-18,Video Ads,1144931,13147,383,59965000,220966000
+Tuần 5,2026-10-19,2026-10-25,Search Ads,509046,26465,1443,57497000,794151000
+Tuần 5,2026-10-19,2026-10-25,Newtab Ads,2272376,20568,716,97968000,412369000
+Tuần 5,2026-10-19,2026-10-25,Skin Ads,3096300,15369,397,96270000,223223000
+Tuần 5,2026-10-19,2026-10-25,Video Ads,1237399,14390,440,71172000,242912000
+Tuần 6,2026-10-26,2026-11-01,Search Ads,537626,29246,1669,59050000,979920000
+Tuần 6,2026-10-26,2026-11-01,Newtab Ads,2402693,20238,635,106708000,371670000
+Tuần 6,2026-10-26,2026-11-01,Skin Ads,3474885,16887,406,105472000,241203000
+Tuần 6,2026-10-26,2026-11-01,Video Ads,1228589,16321,487,70103000,294065000
+Tuần 7,2026-11-02,2026-11-08,Search Ads,660428,37993,2097,73623000,1142823000
+Tuần 7,2026-11-02,2026-11-08,Newtab Ads,2755095,24810,729,121996000,396726000
+Tuần 7,2026-11-02,2026-11-08,Skin Ads,3532943,15510,336,104543000,182125000
+Tuần 7,2026-11-02,2026-11-08,Video Ads,1661912,21193,543,89141000,308311000
+Tuần 8,2026-11-09,2026-11-15,Search Ads,686155,37707,2492,79199000,1438580000
+Tuần 8,2026-11-09,2026-11-15,Newtab Ads,3081509,27438,794,136486000,445577000
+Tuần 8,2026-11-09,2026-11-15,Skin Ads,4218888,18897,401,132275000,233486000
+Tuần 8,2026-11-09,2026-11-15,Video Ads,1544060,19740,489,85162000,302339000
+</script>
+<script>
+const FORMATS = ["Search Ads","Newtab Ads","Skin Ads","Video Ads"];
+const COLOR_VARS = ["--s1","--s2","--s3","--s4"];
+let charts = [];
+let DATA = [];
+
+function parseCSV(text){
+  const lines = text.replace(/^﻿/,"").trim().split(/\r?\n/);
+  const head = lines.shift().split(",");
+  return lines.map(l=>{
+    const v=l.split(","), o={};
+    head.forEach((h,i)=>o[h.trim()] = isNaN(+v[i]) || v[i]==="" ? v[i] : +v[i]);
+    return o;
+  });
+}
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const nf = new Intl.NumberFormat("vi-VN");
+const fmt = n => nf.format(Math.round(n));
+const fmtDec = (n,d=1) => new Intl.NumberFormat("vi-VN",{minimumFractionDigits:d,maximumFractionDigits:d}).format(n);
+const short = n => n>=1e9 ? fmtDec(n/1e9,2)+" tỷ" : n>=1e6 ? fmtDec(n/1e6,1)+" tr" : n>=1e3 ? fmtDec(n/1e3,1)+" nghìn" : fmt(n);
+const sum = (arr,k) => arr.reduce((a,r)=>a+(+r[k]||0),0);
+const dmy = s => { const [y,m,d]=s.split("-"); return `${d}/${m}/${y}`; };
+
+function aggregate(){
+  const weeks = [...new Set(DATA.map(r=>r.tuan))];
+  const fmts = FORMATS.filter(f=>DATA.some(r=>r.dinh_dang_quang_cao===f))
+    .concat([...new Set(DATA.map(r=>r.dinh_dang_quang_cao))].filter(f=>!FORMATS.includes(f)));
+  const byWF = (w,f,k) => sum(DATA.filter(r=>r.tuan===w && r.dinh_dang_quang_cao===f),k);
+  const byW  = (w,k) => sum(DATA.filter(r=>r.tuan===w),k);
+  const byF  = (f,k) => sum(DATA.filter(r=>r.dinh_dang_quang_cao===f),k);
+  return {weeks,fmts,byWF,byW,byF};
+}
+
+function renderStatic(){
+  const A = aggregate();
+  const T = k => sum(DATA,k);
+  const imp=T("luot_hien_thi"), clk=T("luot_nhap_chuot"), conv=T("chuyen_doi"), cost=T("chi_phi_vnd"), rev=T("doanh_thu_vnd");
+  const first=A.weeks[0], last=A.weeks[A.weeks.length-1];
+  const growth = (A.byW(last,"chuyen_doi")/A.byW(first,"chuyen_doi")-1)*100;
+  const starts = DATA.map(r=>r.ngay_bat_dau).sort(), ends = DATA.map(r=>r.ngay_ket_thuc).sort();
+  document.getElementById("period").textContent = `${dmy(starts[0])} – ${dmy(ends[ends.length-1])}`;
+
+  const kpis = [
+    {l:"Lượt hiển thị", v:short(imp), f:`${A.weeks.length} tuần chạy quảng cáo`},
+    {l:"Lượt nhấp chuột", v:short(clk), f:`CTR trung bình ${fmtDec(clk/imp*100,2)}%`},
+    {l:"Chuyển đổi (đơn hàng)", v:fmt(conv), f:`<span class="delta">▲ ${fmtDec(growth,0)}%</span> tuần cuối so với tuần đầu`},
+    {l:"ROAS", v:fmtDec(rev/cost,1)+"<small>x</small>", f:`Doanh thu ${short(rev)} / chi phí ${short(cost)}`, hl:true},
+  ];
+  document.getElementById("kpis").innerHTML = kpis.map(k=>
+    `<div class="kpi${k.hl?" hl":""}"><div class="lbl">${k.l}</div><div class="val">${k.v}</div><div class="foot">${k.f}</div></div>`).join("");
+
+  // insights
+  const roas = A.fmts.map(f=>({f,r:A.byF(f,"doanh_thu_vnd")/A.byF(f,"chi_phi_vnd"),cpa:A.byF(f,"chi_phi_vnd")/A.byF(f,"chuyen_doi"),conv:A.byF(f,"chuyen_doi"),imp:A.byF(f,"luot_hien_thi")}));
+  const best = [...roas].sort((a,b)=>b.r-a.r)[0];
+  const reach = [...roas].sort((a,b)=>b.imp-a.imp)[0];
+  const peakW = [...A.weeks].sort((a,b)=>A.byW(b,"doanh_thu_vnd")-A.byW(a,"doanh_thu_vnd"))[0];
+  document.getElementById("insights").innerHTML = [
+    {t:`${best.f} hiệu quả nhất`, p:`ROAS ${fmtDec(best.r,1)}x và CPA chỉ ${short(best.cpa)} VND/đơn — nên ưu tiên tăng ngân sách cho định dạng này.`},
+    {t:`${reach.f} phủ sóng rộng nhất`, p:`${short(reach.imp)} lượt hiển thị (${fmtDec(reach.imp/imp*100,0)}% tổng). Phù hợp mục tiêu nhận diện thương hiệu đầu phễu.`},
+    {t:`${peakW} là đỉnh doanh thu`, p:`Đạt ${short(A.byW(peakW,"doanh_thu_vnd"))} VND doanh thu trong tuần — gợi ý lặp lại kịch bản khuyến mãi cho mùa Tết.`},
+  ].map(i=>`<div class="insight"><b>${i.t}</b><p>${i.p}</p></div>`).join("");
+
+  // table
+  const row = (name,g,color) => {
+    const i=g("luot_hien_thi"),c=g("luot_nhap_chuot"),v=g("chuyen_doi"),s=g("chi_phi_vnd"),r=g("doanh_thu_vnd");
+    return `<td>${color?`<span class="dot" style="background:var(${color})"></span>`:""}${name}</td><td>${fmt(i)}</td><td>${fmt(c)}</td><td>${fmtDec(c/i*100,2)}%</td><td>${fmt(v)}</td><td>${fmt(s)}</td><td>${fmt(s/v)}</td><td>${fmt(r)}</td><td><span class="roas-pill">${fmtDec(r/s,1)}x</span></td>`;
+  };
+  document.getElementById("tbl").innerHTML =
+    `<thead><tr><th>Định dạng</th><th>Hiển thị</th><th>Nhấp chuột</th><th>CTR</th><th>Chuyển đổi</th><th>Chi phí (VND)</th><th>CPA (VND)</th><th>Doanh thu (VND)</th><th>ROAS</th></tr></thead>
+     <tbody>${A.fmts.map((f,i)=>`<tr>${row(f,k=>A.byF(f,k),COLOR_VARS[i%4])}</tr>`).join("")}</tbody>
+     <tfoot><tr>${row("Tổng cộng",T)}</tr></tfoot>`;
+
+  document.getElementById("generated").textContent = "Cập nhật: " + new Date().toLocaleDateString("vi-VN");
+}
+
+function legend(id, items){
+  document.getElementById(id).innerHTML = items.map(([n,c])=>`<span><i style="background:${c}"></i>${n}</span>`).join("");
+}
+
+function renderCharts(){
+  charts.forEach(c=>c.destroy()); charts=[];
+  const A = aggregate();
+  const surface=css("--surface"), text2=css("--text-2"), muted=css("--muted"), grid=css("--grid"), textC=css("--text");
+  const colors = A.fmts.map((_,i)=>css(COLOR_VARS[i%4]));
+  Chart.defaults.font.family = '"Be Vietnam Pro",system-ui,sans-serif';
+  Chart.defaults.font.size = 12;
+  Chart.defaults.color = muted;
+
+  const tooltip = {
+    backgroundColor: css("--surface"), titleColor:textC, bodyColor:text2, borderColor:css("--border"), borderWidth:1,
+    padding:10, cornerRadius:10, boxPadding:4, usePointStyle:true, titleFont:{weight:"700"},
+  };
+  const baseScales = (stacked, yFmt) => ({
+    x:{stacked, grid:{display:false}, border:{color:grid}, ticks:{color:muted}},
+    y:{stacked, beginAtZero:true, grid:{color:grid}, border:{display:false}, ticks:{color:muted, callback:yFmt, maxTicksLimit:6}},
+  });
+  const common = {responsive:true, maintainAspectRatio:false, interaction:{mode:"index",intersect:false},
+    plugins:{legend:{display:false}}};
+
+  // stacked weekly chart builder
+  const stacked = (id, lg, key, div, unit) => {
+    legend(lg, A.fmts.map((f,i)=>[f,colors[i]]));
+    const ds = A.fmts.map((f,i)=>({
+      label:f, data:A.weeks.map(w=>A.byWF(w,f,key)/div), backgroundColor:colors[i],
+      borderColor:surface, borderWidth:{top:i<A.fmts.length-1?2:0}, borderSkipped:"bottom",
+      borderRadius: i===A.fmts.length-1 ? {topLeft:4,topRight:4} : 0, maxBarThickness:44,
+    }));
+    charts.push(new Chart(document.getElementById(id), {type:"bar", data:{labels:A.weeks, datasets:ds},
+      options:{...common, scales:baseScales(true, v=>fmt(v)),
+        plugins:{...common.plugins, tooltip:{...tooltip, itemSort:(a,b)=>b.datasetIndex-a.datasetIndex,
+          callbacks:{label:c=>` ${c.dataset.label}: ${fmt(c.raw)} ${unit}`,
+            footer:items=>`Tổng: ${fmt(items.reduce((a,i)=>a+i.raw,0))} ${unit}`}}}}}));
+  };
+  stacked("cConv","lgConv","chuyen_doi",1,"đơn");
+  stacked("cClick","lgClick","luot_nhap_chuot",1000,"nghìn");
+
+  // cost vs revenue grouped
+  const cCost = css("--muted"), cRev = css("--brand");
+  legend("lgRev", [["Chi phí",cCost],["Doanh thu",cRev]]);
+  charts.push(new Chart(document.getElementById("cRev"), {type:"bar",
+    data:{labels:A.weeks, datasets:[
+      {label:"Chi phí", data:A.weeks.map(w=>A.byW(w,"chi_phi_vnd")/1e6), backgroundColor:cCost, borderRadius:{topLeft:4,topRight:4}, borderSkipped:"bottom", maxBarThickness:34, categoryPercentage:.62, barPercentage:.92},
+      {label:"Doanh thu", data:A.weeks.map(w=>A.byW(w,"doanh_thu_vnd")/1e6), backgroundColor:cRev, borderRadius:{topLeft:4,topRight:4}, borderSkipped:"bottom", maxBarThickness:34, categoryPercentage:.62, barPercentage:.92},
+    ]},
+    options:{...common, scales:baseScales(false, v=>fmt(v)),
+      plugins:{...common.plugins, tooltip:{...tooltip, callbacks:{
+        label:c=>` ${c.dataset.label}: ${fmt(c.raw)} triệu VND`,
+        footer:items=>{const s=items.find(i=>i.datasetIndex===0), r=items.find(i=>i.datasetIndex===1); return s&&r?`ROAS: ${fmtDec(r.raw/s.raw,1)}x`:"";}}}}}}));
+
+  // horizontal per-format bars
+  const hbar = (id, vals, fmtFn, unit) => {
+    charts.push(new Chart(document.getElementById(id), {type:"bar",
+      data:{labels:A.fmts, datasets:[{data:vals, backgroundColor:colors, borderRadius:{topRight:4,bottomRight:4}, borderSkipped:"left", maxBarThickness:30}]},
+      options:{...common, indexAxis:"y", interaction:{mode:"nearest",intersect:false,axis:"y"},
+        layout:{padding:{right:56}},
+        scales:{x:{beginAtZero:true, grid:{color:grid}, border:{display:false}, ticks:{color:muted, maxTicksLimit:5, callback:v=>fmtFn(v)}},
+                y:{grid:{display:false}, border:{color:grid}, ticks:{color:text2, font:{weight:"600"}}}},
+        plugins:{...common.plugins, tooltip:{...tooltip, callbacks:{label:c=>` ${fmtFn(c.raw)} ${unit}`}}}},
+      plugins:[{id:"valueLabels", afterDatasetsDraw(ch){
+        const {ctx}=ch; ctx.save(); ctx.fillStyle=textC; ctx.font='700 12.5px "Be Vietnam Pro",system-ui'; ctx.textBaseline="middle";
+        ch.getDatasetMeta(0).data.forEach((b,i)=>ctx.fillText(fmtFn(vals[i])+(unit==="x"?"x":""), b.x+8, b.y));
+        ctx.restore();}}]}));
+  };
+  hbar("cRoas", A.fmts.map(f=>A.byF(f,"doanh_thu_vnd")/A.byF(f,"chi_phi_vnd")), v=>fmtDec(v,1), "x");
+  hbar("cCpa", A.fmts.map(f=>A.byF(f,"chi_phi_vnd")/A.byF(f,"chuyen_doi")/1000), v=>fmt(v), "nghìn VND");
+}
+
+function load(text){ DATA = parseCSV(text); renderStatic(); renderCharts(); }
+load(document.getElementById("csvData").textContent);
+
+document.getElementById("csvInput").addEventListener("change", e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const rd=new FileReader(); rd.onload=()=>load(rd.result); rd.readAsText(f,"utf-8");
+});
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderCharts);
+</script>
+</body>
+</html>
